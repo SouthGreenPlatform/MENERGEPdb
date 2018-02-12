@@ -48,7 +48,7 @@ p {
 	margin-bottom:20px;
 }
 a {
-	color:#6FAB4F;
+	color:#e75626;
 }
 a:hover {
 	color:#000;
@@ -57,7 +57,7 @@ a:focus {
 	outline:none;
 }
 a.button { 
-    background-color: #80B763;
+    background-color: #e75626;
     border-radius: 5px;
     color: #FFFFFF;
     display: inline-block;
@@ -74,7 +74,7 @@ a.button-reversed {
 }
 
 a.button:hover {
-	background-color: #669D48;
+	background-color: #f6b93b;
 }
 
 a.button-reversed:hover {
@@ -107,7 +107,7 @@ fieldset form input, fieldset form select, fieldset form textarea {
 }
 fieldset form input.formbutton {
 border:none;
-    background-color: #80B763;
+    background-color: #e75626;
     border-radius: 5px;
     color: #FFFFFF;
     display: inline-block;
@@ -121,7 +121,7 @@ border:none;
 
 }
 h1 {
-	font-size:2.4em;
+	font-size:20px;
 }
 h2 {
 	color:#2f2f2f;
@@ -131,7 +131,7 @@ h2 {
 	margin:0;
 }
 h3 {
-	color:#80B763;
+	color:#e75626;
 	font-size:1.6em;
 	padding-bottom:10px;
 }
@@ -198,7 +198,7 @@ header h2 {
 /** body **/
 section#body {
 	padding: 0;
-	background: #80B763;
+	background: #2d3436;
 }
 
 
@@ -226,20 +226,19 @@ nav#mainnav ul {
 
 nav#mainnav li {
 	padding:0;
-	border-bottom: 1px solid #99C581;
-	border-top: 1px solid #6FAB4F;
+	border-bottom: 1px solid #e67e22;
 }
 nav#mainnav li.selected-item  {
 	border-bottom:none;
 }
 nav#mainnav li.selected-item a,
 nav#mainnav li.selected-item a:hover {
-	color:#80B763;
+	color:#e75626;
 	font-weight:bold;
 	background: #fff;
 }
 nav#mainnav li a:hover {
-	background:#669D48;
+	background:#f6b93b;
 	color: #fff;
 	text-decoration:none;
 }
@@ -348,4 +347,14 @@ footer p a:hover { color:#333; border-bottom-color: #333; }
 	nav#mainnav ul li a { margin-top: 0; padding: 1em; }
 
 
+}
+#blobimg{
+	width: 50px;
+}
+#metatest{
+	max-width: 20%;
+	text-align: center;
+	display: block;
+	font-size: 20px;
+	margin: auto;
 }
