@@ -314,7 +314,7 @@ function myFunction()
 	
 	print "<div id='right'>";
 	print "<div id='circle'>";
-	print "<iframe src='http://bioinfo-test.ird.fr:84/cgi-bin/chrom_viewer.cgi?session=4' width='100%' height='700' style='border:solid 0px black;'></iframe>";
+	print "<iframe src='$Configuration::CGI_URL/chrom_viewer.cgi?session=4' width='100%' height='700' style='border:solid 0px black;'></iframe>";
 	print "</div>";
 	print "</div>";
 	print "</div>";
@@ -500,7 +500,8 @@ function myFunction()
 	###########################  Part Plante  ###########################
 	##############  Species span  ##############
 	print "<td align=center>";
-	print "<select name=0 id=species2_0 onChange='getCountryVarieties(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");getVarieties1(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\")'>\n";
+	#print "<select name=0 id=species2_0 onChange='getCountryVarieties(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");getVarieties1(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\")'>\n";
+	print "<select name=0 id=species2_0 onChange='getCountryVarieties(this.name);getVarieties1(this.name)'>\n";
 	print "<option value='All'>All</option>\n";
 	foreach my $species(sort keys(%hash_species)){
 		print "<option value='$species'>$species</option>\n";
@@ -510,7 +511,8 @@ function myFunction()
 	
 	##############  Country_varietes span  ##############
 	print "<td align=center><span id='PaysdesVarietesSpan_0'>\n"; 
-	print "<select name=0 id=country_varieties_0 onChange='getVarieties2(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	#print "<select name=0 id=country_varieties_0 onChange='getVarieties2(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	print "<select name=0 id=country_varieties_0 onChange='getVarieties2(this.name);'>\n";
 	print "<option value='All'>All</option>\n";
         foreach my $country(sort keys(%hash_country)){     
 		my $nb_var = $hash_country{$country}; 
@@ -533,7 +535,8 @@ function myFunction()
 	###########################  Part Pathogens  ###########################
 	##############  Pathogens span  ##############
 	print "<td align=center><span id='PathogenesSpan_0'>";
-	print "<select name=0 id=pathogen_0 onChange='getCountryPathogenes(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");getPathotype1(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	#print "<select name=0 id=pathogen_0 onChange='getCountryPathogenes(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");getPathotype1(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	print "<select name=0 id=pathogen_0 onChange='getCountryPathogenes(this.name);getPathotype1(this.name);'>\n";
 	print "<option value='All'>All</option>\n";
         foreach my $pathogen(sort keys(%pathogen)){      
 		if ($pathogen){print "<option value='$pathogen'>$pathogen</option>\n";}
@@ -543,7 +546,8 @@ function myFunction()
 	
 	##############  Country_pathogens span  ##############
 	print "<td align=center><span id='CountryPathogenesSpan_0'>\n";
-	print "<select name=0 id=country_pathogenes_0 onChange='getPathotype2(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	#print "<select name=0 id=country_pathogenes_0 onChange='getPathotype2(this.name,\"$Configuration::CGI_URL/display_ajax.cgi\");'>\n";
+	print "<select name=0 id=country_pathogenes_0 onChange='getPathotype2(this.name);'>\n";
 	print "<option value='All'>All</option>\n";
         foreach my $country_pathogenes(sort keys(%hash_country_patho)){      
 		if ($country_pathogenes){print "<option value='$country_pathogenes'>$country_pathogenes</option>\n";}
@@ -634,6 +638,11 @@ function myFunction()
 	my $message_erreur = '';
 	my $cookie = $cgi->cookie( -name => $session );
 	my $file_session = File::Spec->catfile( $session_dir, 'sess_' . $cookie );
+	
+	my $LOG = "$Configuration::TMP_DIR/log.info";
+    open (F , ">", $LOG) or die ("erreur: \n $!\n");
+	print F "no \n";
+	
 	if (  $cgi->request_method() eq 'POST' and $cgi->param('connexion') and ( $identifiant ne 'test' or $motdepasse ne 'pass' ) )
 	{
 		$message_erreur
@@ -643,8 +652,7 @@ function myFunction()
 	elsif ( $cgi->request_method() eq 'POST' and $cgi->param('connexion') and ( $identifiant eq 'test' and $motdepasse eq 'pass' ) )
 	{
 		identifiant => $identifiant ;
-		#print $cgi->redirect("$Configuration::CGI_URL"+"/file_upload.pl?session=$session");
-		print $cgi->redirect('http://bioinfo-test.ird.fr:84/cgi-bin/menergepdb-work/file_upload.pl?session=$session');
+		print $cgi->redirect('$Configuration::CGI_URL/file_upload.pl?session=$session');
 		exit;
 	}
 	else {
@@ -676,7 +684,7 @@ function myFunction()
         print "</div>";
         print "</div>";
 	
-	
+	close(F);
 	if ($cgi -> param("mode") ne "simple"){	
 	        print $footer;
 	}
