@@ -348,7 +348,7 @@ function myFunction()
 	
 	print "<div id='right'>";
 	print "<div id='circle'>";
-	print "<iframe src='http://bioinfo-test.ird.fr:84/cgi-bin/slides/carrousel.html' width='100%' height='700' style='border:solid 0px black;'></iframe>";
+	print "<iframe src='$Configuration::CGI_URL/carroussel.cgi' width='100%' height='700' style='border:solid 0px black;'></iframe>";
 	print "</div>";
 	print "</div>";
 	print "</div>";
