@@ -340,7 +340,8 @@ function myFunction()
 	print "<div id='Global'>";
 	print "<div id='left'>";
 	print "<div id='circle'>";
-	print "<iframe src='http://bioinfo-test.ird.fr:84/cgi-bin/pathogen_Geographie.html' width='100%' height='700' style='border:solid 0px black;'></iframe>";
+	#print "<iframe src='http://bioinfo-test.ird.fr:84/cgi-bin/pathogen_Geographie.html' width='100%' height='700' style='border:solid 0px black;'></iframe>";
+	print "<iframe src='$Configuration::CGI_URL/pathogen_geo.cgi' width='100%' height='700' style='border:solid 0px black;'></iframe>";
 	print "</div>";
 	print "</div>";
 	
