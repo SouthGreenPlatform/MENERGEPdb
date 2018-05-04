@@ -13,13 +13,69 @@ Contains various helper functions.
 * Functions getSearch() gere tous les requettes de l'onglet Multipathogen Basic Search 
 *******************************************************************************************
 **/
-function getSearch(url)
+function update_countries()
 {
-	var params = "action=getSearch";
+	var url = "http://bioinfo-test.ird.fr:84/cgi-bin/menergepdb-work/display_ajax.cgi";
+	var params = "action=changeCountryBasic";
+	params = params + "&counter=0";
+	listelements = document.getElementById("species1_0").value;
+      	if (listelements){
+                params = params + '&ListElements=' + listelements;
+        }
+
+	//console.log(params);
+	url = url + "?" + params;
+	var ajax_div = document.getElementById('country1_0');
+	$.get( url, function( data ) {
+			ajax_div.innerHTML = data;
+	       }); 
+}
+
+function update_var(){
+	var url = "http://bioinfo-test.ird.fr:84/cgi-bin/menergepdb-work/display_ajax.cgi";
+	var params = "action=changeVarBasic";
+	params = params + "&counter=0";
+	listelements = document.getElementById("species1_0").value + ",";
+      	if (listelements){
+                params = params + '&ListElements=' + listelements;
+        }
+
+
+	//console.log(params);
+	url = url + "?" + params;
+	var ajax_div = document.getElementById('variete1_0');
+	$.get( url, function( data ) {
+			ajax_div.innerHTML = data;
+	       }); 
+}
+
+
+function updateVar2(){
+	var url = "http://bioinfo-test.ird.fr:84/cgi-bin/menergepdb-work/display_ajax.cgi";
+	var params = "action=changeVar2Basic";
+	params = params + "&counter=0";
+	listelements = document.getElementById("species1_0").value + "," + document.getElementById("country1_0").value;
+      	if (listelements){
+                params = params + '&ListElements=' + listelements;
+        }
+	//console.log(params);
+	url = url + "?" + params;
+	var ajax_div = document.getElementById('variete1_0');
+	$.get( url, function( data ) {
+			ajax_div.innerHTML = data;
+	       }); 
+}
+
+
+function getBasic2(url){
+	//alert(bouclade);
+
+	var params = "action=getBasic2";
 	var ajax_div = document.getElementById('results_Search');
-      
+    var counter = 0;
 	var Pathogens = document.forms.form_Search.PathogenNames.value;
 	var arrayOfStrings = Pathogens.split(";");
+	
 	for (var i = 0; i <= arrayOfStrings.length; i++)
 	{
 		var params_res;
@@ -32,56 +88,57 @@ function getSearch(url)
 				if (document.getElementsByName(Pathogen)[j].checked == true)
 				{
 					list_Pathotype += document.getElementsByName(Pathogen)[j].value + ",";
+					//recuperation de la valeur (R, MR, S)
 					
 				}
 			}
 			params_res = 'resistance_'+Pathogen+'=' + list_Pathotype;			
 		}
 		params = params + '&'+ params_res;
+		console.log(params);
+		//action getSearch sur le pathogene selectionne
+		//action=getSearch&resistance_RYMV=R,&resistance_Xanthomonas=&resistance_undefined=
+		
 	}
 	
-	if (document.forms.form_Search.species.options)
-	{
-                var list = document.forms.form_Search.species.options;
-				console.log(list);
-                var list_species="";
-                for (var i = list.length - 1; i>=0; i--)
-                {
-                        if (document.getElementById('species').options[i].selected==true)
-						{
-                                list_species += list[i].value + ",";
-								console.log(list_species); 
-                        }
-                }
-                params = params + '&species=' + list_species;
-				console.log(params);
-    }
+		if (document.getElementById('species1_'+counter).options)
+		{
+			var list = document.getElementById('species1_'+counter).options;
+			var list_species2="";
+			for (var i = list.length - 1; i>=0; i--)
+			{
+				if (document.getElementById('species1_'+counter).options[i].selected==true){
+					list_species2 += list[i].value + ","; 
+				}
+			}
+			params = params + '&species1_'+counter +'='+ list_species2;
+		}
 
-    if (document.forms.form_Search.country.options)
-	{
-                var list = document.forms.form_Search.country.options;
-                var list_country="";
-                for (var i = list.length - 1; i>=0; i--)
-                {
-                        if (document.getElementById('country').options[i].selected==true){
-                                list_country += list[i].value + ",";
-                        }
-                }
-                params = params + '&country=' + list_country;
-        }
-
-      	if (document.forms.form_Search.variete.options)
-	{
-                var list = document.forms.form_Search.variete.options;
-                var list_variete="";
-                for (var i = list.length - 1; i>=0; i--)
-                {
-                        if (document.getElementById('variete').options[i].selected==true){
-                                list_variete += list[i].value + ",";
-                        }
-                }
-                params = params + '&variete=' + list_variete;
-        }
+		if (document.getElementById('country1_'+counter).options)
+		{
+			var list = document.getElementById('country1_'+counter).options;
+			var list_country_variete="";
+			for (var i = list.length - 1; i>=0; i--)
+			{
+			      if (document.getElementById('country1_'+counter).options[i].selected==true){
+					list_country_variete += list[i].value + ",";
+				}
+			}
+			params = params + '&country1_'+counter +'=' + list_country_variete;
+		}
+      
+		if (document.getElementById('variete1_'+counter).options)
+		{
+			var list = document.getElementById('variete1_'+counter).options;
+			var list_variete2="";
+			for (var i = list.length - 1; i>=0; i--)
+			{
+				if (document.getElementById('variete1_'+counter).options[i].selected==true){
+					list_variete2 += list[i].value + ",";
+				}
+			}
+			params = params + '&variete1_'+counter +'=' + list_variete2;
+		}
 	
 	Vars = document.forms.form_Search.var.value;
         if (Vars)
@@ -98,7 +155,6 @@ function getSearch(url)
 		ajax_div.innerHTML = data;
 	});
 }
-
 /**
 ******************************************************************************************************************************************
 * Functions afficheSynonymes_varietes() lance l'alerte contenant les synonymes des varietes dans l'onglet Multipathogen Advanced search

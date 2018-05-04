@@ -287,37 +287,69 @@ function myFunction()
 	
 	print "</div>";
 	####################################################################
-        # Plants
-        ####################################################################
-        print "<div id='Plants'>";
+    # Plants
+    ####################################################################
+    print "<div id='Plants'>";
 	print "<br/><br/><br/>";
 	
 	print "<table class='overview'>";
 	print "<tr>";
 	print "<td>";
 	print "<font>The plants tab is divided into two parts:<br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	- Left the hithmaps that can see the number of variety for each African country. <br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	- Right statistics that show the number of variety for each pathogenic.</font>";
+	- Top : highmap of the number of variety for each country & google map of coordinate for every parcel. <br/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	- Bottom : statistics showing the number of variety for every pathotypes.</font>";
 	print "</td>";
 	print "</tr>";
 	print "</table>";
 	print "<br/><br/>";
 
-	print "<div id='Global'>";
-	print "<div id='left'>";
-	print "<div id='circle'>";
-	print "<iframe src='http://bioinfo-test.ird.fr:84/cgi-bin/highmaps.cgi' width='100%' height='700' style='border:solid 0px black;'></iframe>";	
-	print "</div>";
-	print "</div>";
+	print "<div id='Plantstab'>";
 	
-	print "<div id='middle'></div>";
+	#Generate Highmaps Google maps 
+	#if longitude and latitude are present in the hash_varieties => creation of these 2 tabs
+	#if these informations aren't present => creation of Highmaps tab only
+	my $val_coord = 0;
+	for my $key (sort keys %hash_varietes){
+		if(exists($hash_varietes{$key}{'Longitude'}) or ($hash_varietes{$key}{'Latitude'})){
+		$val_coord++;
+		}
+		else{
+		$val_coord = $val_coord;
+		}
+	}
 	
-	print "<div id='right'>";
+	if ($val_coord != 0){
+		print "<div id='Global'>";
+		print "<div id='left'>";
+		print "<div id='circle'>";
+		print "<iframe src='$Configuration::CGI_URL/highmaps.cgi' width='100%' height='700' style='border:solid 0px black;'></iframe>";	
+		print "</div>";
+		print "</div>";
+		
+		print "<div id='middle'></div>";
+		
+		print "<div id='right'>";
+		print "<div id='circle'>";
+		print "<iframe src='$Configuration::CGI_URL/countries_geo.cgi?session=4' width='100%' height='700' style='border:solid 0px black;'></iframe>";	
+		print "</div>";
+		print "</div>";
+		print "</div>";
+	}
+	else{
+		print "<div id='right'>";
+		print "<div id='circle'>";
+		print "<iframe src='$Configuration::CGI_URL/highmaps.cgi' width='100%' height='700' style='border:solid 0px black;'></iframe>";	
+		print "</div>";
+		print "</div>";
+	}
+	
+	#Generate Hicharts
 	print "<div id='circle'>";
 	print "<iframe src='$Configuration::CGI_URL/chrom_viewer.cgi?session=4' width='100%' height='700' style='border:solid 0px black;'></iframe>";
 	print "</div>";
-	print "</div>";
-	print "</div>";
+	
+	 print "</div>";
+
 	
 	print "</div>";
 	####################################################################
@@ -355,11 +387,11 @@ function myFunction()
 	print "</div>";
 	
 	print "</div>";
-        ####################################################################
-        # Basic Search tab
-        ####################################################################
-        print "<div id='Search'>";
-        print "<form name='form_Search' method ='post' action ='home.cgi'>";
+	####################################################################
+	# Basic Search tab
+	####################################################################
+	print "<div id='Search'>";
+	print "<form name='form_Search' id='form_Search' method ='post' action ='home.cgi'>";
 	print "<br/><br/>";
 	print "<fieldset>";
 	print "<legend><b>Search fields</b></legend>";
@@ -395,22 +427,21 @@ function myFunction()
 	print "<td>";
 	print "<textarea rows='8' cols='20' name='var'>$var</textarea>";
 	print "</td>";
-        print "<tr>";
+    print "<tr>";
 	print "<td>";
 	print "<dt><strong>Filters</strong></dt>";
 	print "</td>";
 	print "</tr>";
-	##############  Multiple select by species  ##############
-        print "<br/>";
+	####
+	#species
+	print "<br/>";
 	print "<table>";
 	print "<tr>";
-	print "<td valign=center>Enter species name (".scalar keys(%hash_species).")";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+	print "<td valign=center>Enter species name ";
 	print "</td>";
 	print "<td>";
-	print "<select multiple name=species id=species size=3>\n";
+	print "<select multiple name=species1_0 id=species1_0 size=3 onchange=\"update_countries(); update_var();\">\n";
+	#print "<select multiple name=species1_0 id=species1_0 size=3 onchange=\"update_var();\">\n";
 	foreach my $species(sort keys(%hash_species)){
 		print "<option value='$species'>$species</option>\n";
         }
@@ -418,56 +449,57 @@ function myFunction()
 	print "</td>";
 	print "</tr>";
 	print "</table>\n";
-	##############  Multiple select by country variety  ##############
+	
+	#country
 	print "<br/>";
+	#print "<span id='country1_0'>";
 	print "<table>";
 	print "<tr>";
-	print "<td valign=center> Country of varieties (".scalar keys(%hash_country).")";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+	print "<td valign=center> Country of varieties ";
 	print "</td>";
 	print "<td>";
-	print "<select multiple name=country id=country size=15>\n";
+	#print "<select multiple name=country id=country size=15 onchange=\"update_strains_by_geo();\">\n";
+	print "<select multiple name=country1_0 id=country1_0 size=3 onchange=\"updateVar2();\">\n";
         foreach my $country (sort keys(%hash_country)){
 		print "<option value='$country'>$country</option>\n";
         }
-        print "</select></td></tr></table>\n";
-	##############  Multiple select by variety  ##############
-    	print "<br/>";
+    print "</select></td></tr></table>\n";
+	#print "</span>\n";
+	
+	#variety
+	print "<br/>";
+	print "<span id='varieties_select'>";
 	print "<table>";
 	print "<tr>";
-	print "<td valign=center>Enter varieties names  (".scalar keys(%hash_varietes).") ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+	print "<td valign=center>Enter varieties names ";
 	print "</td>";
 	print "<td>";
-	print "<select multiple name=variete id=variete size=15>\n";
+	print "<select multiple name=variete id=variete1_0 size=15>\n";
         foreach my $variete(sort keys(%hash_varietes)){      
                 print "<option value='$variete'>$variete</option>\n";
         }
-        print "</select>";
+    print "</select>";
 	print "</td>";
 	print "</tr>";
 	print "</table>\n";
-        print "<br/><br/>";
-	print "<input type='button' class='submit' value='Search' onclick='getSearch(\"$Configuration::CGI_URL/display_ajax.cgi\");'/>";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
-	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
+	print "</span>\n";
+	
+	#result table
+	print "<br/><br/>";
+	print "<input type='button' class='submit' value='Search' onclick='getBasic2(\"$Configuration::CGI_URL/display_ajax.cgi\");'/>";
 	print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ";
 	print "<button id='refresh' type='reset' class='refresh'> Reset </button>";
-        print "</fieldset>";       
+    print "</fieldset>";       
 	print "</form>";
 	print "<br/>";	
 	print "<fieldset>";
-        print "<legend><b>Results display</b> </legend>";
+    print "<legend><b>Results display</b> </legend>";
 	print "<br/><br/>";
 	print "<div id='results_Search'></div>";
-        print "</fieldset>";       
+    print "</fieldset>";       
 	print "</div>";
+
+	
 	
         #####################################################################
         # Advanced Search tab

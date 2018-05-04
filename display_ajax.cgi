@@ -122,6 +122,111 @@ while(<F>){
 	$val_log = $_;
 }
 close(F);
+
+#
+##Menu deroulant automatique pour onglet Basic search
+#
+#upload country field base on specie name entered
+if ($action eq "changeCountryBasic") {
+	print "<select name=$counter id=country1_0".$counter." onChange='getVar2(this.name);'>\n";
+	#print "<select name=0 id=country_varieties_0 onChange='getVarieties2(this.name,VarietesSpan_);'>\n";
+	#print "<option value='All'>All</option>\n";
+	if($ListElements!~/All/){
+		my %hashC;
+		foreach my $i (sort keys(%hash_varietes)){
+			my $speciesname = $hash_varietes{$i}{"Species"};
+			my $countryname = $hash_varietes{$i}{"Country"};
+			if ($speciesname =~ m/\b$ListElements\b/){
+				$hashC{$countryname}++;
+			}
+		}
+		foreach my $country (sort keys (%hashC )){
+			my $nboccurence = $hashC{$country};
+			print "<option value='$country'>$country($nboccurence)</option>\n";
+		}
+	}
+	elsif($ListElements=~/All/) {
+		foreach my $i(sort keys(%hash_country))
+		{
+			print "<option value='$i'>$i</option>\n";
+		}
+	}
+	print "</select>\n";
+	exit;
+}
+
+#upload variety field base on specie name entered
+if ($action eq "changeVarBasic") {
+	my @tabElements = split(/,/,$ListElements);
+	my $firstelement = $tabElements[0];
+	my $secondelement = $tabElements[1];
+	print "<select name=$counter id=variety1_".$counter." >\n";
+	#print "<option value='All'>All</option>\n";
+	if ($firstelement!~/All/) {
+		my %hashV;
+		foreach my $variete(sort keys(%hash_varietes)){
+			my $speciesname = $hash_varietes{$variete}{"Species"};
+			if (($firstelement =~/$speciesname/)) {
+				$hashV{$variete}++;
+			}		
+		}
+		foreach my $variety (sort keys (%hashV)){
+			#my $nboccurence = $hashV{$variety};
+			print "<option value='$variety'>$variety</option>\n";
+		}
+	}
+	elsif ($ListElements=~/All/) {
+		foreach my $i(sort keys(%hash_varietes)){      
+		        print "<option value='$i'>$i</option>\n";
+		}
+	}
+	print "</select>\n";
+	exit;
+}
+
+#upload variety field base on country entered
+if ($action eq "changeVar2Basic") {
+	print "<select name=$counter id=variety1_".$counter." >\n";
+	#print "<option value='All'>All</option>\n";
+	my %hashV;
+	if ($ListElements!~/All/) {
+		if ($ListElements=~/^,/) {
+			my @tabElements = split(/,/,$ListElements);
+			my $element = $tabElements[1];
+			foreach my $variete(sort keys(%hash_varietes)){
+				my $countryname = $hash_varietes{$variete}{"Country"};
+				if ($element =~ /$countryname/) {
+					$hashV{$variete}++;
+				}		
+			}
+			#print "<option value='$secondelement'>$secondelement</option>\n";
+		}
+		elsif($ListElements!~/^,/){
+			my @tabElements = split(/,/,$ListElements);
+			my $firstelement = $tabElements[0];
+			my $secondelement = $tabElements[1];
+			foreach my $variete(sort keys(%hash_varietes)){
+				my $speciesname = $hash_varietes{$variete}{"Species"};
+				my $countryname = $hash_varietes{$variete}{"Country"};
+				if ($firstelement =~/$speciesname/ && $secondelement =~ /$countryname/) {
+					$hashV{$variete}++;
+				}		
+			}
+		}
+		foreach my $variety (sort keys (%hashV)){
+			#my $nboccurence = $hashV{$variety};
+			print "<option value='$variety'>$variety</option>\n";
+		}
+	}
+	elsif ($ListElements=~/All/) {
+		foreach my $i(sort keys(%hash_varietes)){      
+		        print "<option value='$i'>$i</option>\n";
+		}
+	}
+	
+	print "</select>\n";
+	exit;
+}
 ############################################################################
 #Menu deroulant automatique liee pour les country varities
 ############################################################################
@@ -308,7 +413,7 @@ if ($action eq "changePathotype2") {
 ############################################################################
 #Affichage des requettes de longlet Search
 ############################################################################
-if ($action eq "getSearch"){
+if ($action eq "getBasic2"){
 	my $species_concatenation;
 	my $country_concatenation;
 	my $variety_concatenation;
@@ -375,7 +480,8 @@ if ($action eq "getSearch"){
 			}
 			my %nb_matches;
 			my %infos_patho_concat;
-			my %hash_alert;
+            my %hash_alert;
+			my $code;
 			#my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code";
 			foreach my $synonymes (keys %{$hash_varietes{$variety_code}{"Synonymes"}})
 			{
@@ -391,7 +497,7 @@ if ($action eq "getSearch"){
 				{
 					if ($variety_code =~ m/\b$i\b/)
 					{
-						my $code;
+						#my $code;
 						foreach my $t (keys %{$interAct{$i}})
 						{
 							my $concatenation='';
@@ -419,7 +525,6 @@ if ($action eq "getSearch"){
 							{
 								$code = "-";
 							}
-							#print "$t $code<br>";
 							my $expected_value = $expected_resistance{$t};
 							if (!$expected_resistance{$t}) {
 								next;
@@ -428,30 +533,52 @@ if ($action eq "getSearch"){
 							{
 								next;
 							}
-							$infos_patho_concat{$t} = "<a href=javascript:afficheIsolat_rymv('$concatenation','$variety_code')>$code</a>";
-							$nb_matches{$variety_code}++;
 							
-							#alert the user if replicates are different
+							#delete special characters
+							$concatenation =~ s/-//;
+							$concatenation =~ s/^,.//;
+							#alert javascript
+							if($concatenation=~ /\w.+/){
+								$infos_patho_concat{$t} = "<a href=javascript:afficheIsolat_rymv('$concatenation','$variety_code')>$code</a>";
+							}
+							else {
+								$concatenation = "none";
+								$infos_patho_concat{$t} = "<a href=javascript:afficheIsolat_rymv('$concatenation','$variety_code')>$code</a>";
+							}
+							#$infos_patho_concat{$t} = "<a href=javascript:afficheIsolat_rymv('$concatenation','$variety_code')>$code</a>";
+							$nb_matches{$variety_code}++;
+                            
+                            #alert the user if replicates are different
                             my @info_alert;
                             @info_alert = split(",", $concatenation);
-                            my $size = scalar @info_alert;
-                            
-                            for (my $y =1; $y<=($size-2);$y++){
-                                if($info_alert[$y] ne $info_alert[$y+1]){
-                                    $hash_alert{$t}+=1;
-                                }
-                            }
+							my @clear_list;
+							for my $el (@info_alert){
+								if ($el ne "-"){
+									push(@clear_list, $el);
+								}
+								else{
+									next;
+								}
+							}
+							my $size = scalar @clear_list;
+                            for (my $i = 0; $i<$size-1; $i++){
+								if($clear_list[$i] ne $clear_list[$i+1]){
+									$hash_alert{$t}=1;
+								}
+							}
+							
 						}
 					} 
 				}
 			}
 	#		print $variety_code . " " . $nb_matches{$variety_code}." " .$count_info_resistance."<br/>";
-			my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code";
+			my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code	";
+			#print Dumper %hash_alert;
 			if ($nb_matches{$variety_code} == $count_info_resistance) {
 				$compteur++;
 				print F $line_var;
 				foreach my $p(@patho_displayed){
-					print F "\t" . $infos_patho_concat{$p};
+					print F  $infos_patho_concat{$p};
                     
                     if($hash_alert{$p}!=0){
                         print F "   (!)";
@@ -470,16 +597,16 @@ print "<table class='terms'><tr><td><font>Terms of resistance/susceptibility :</
 - Otherwise, the variety is considered suceptible(S).</br></br>
 The sign (!) is used when different replicates gave different results. These results are visible by a click on the term.
 </font></td></tr></table><br/><br/>";
+#print Dumper $level_user;
 }
-
 
 ############################################################################
 #Affichage des requettes de l'onglet Advanced
 ############################################################################
 if ($action eq "getAdvanced"){
-	my $OUT = "$execution_dir/table.$session.csv";
+	my $OUT = "$execution_dir/table.$session.csv"; #results will be written there
 	open (F , ">$OUT");
-	print F "Species	Country	Varieties	Pathogen	Country of pathogen	Pathotype	Interactions type\n";
+	print F "Species	Country	Varieties	Pathogen	Country of pathogen	Pathotype	Interactions type	Complementary informations\n";
 	my %nb_matches;
 	for (my $i =1; $i <= $counter; $i++)
 	{
@@ -532,18 +659,23 @@ if ($action eq "getAdvanced"){
 				my $country_varieties_code = $hash_varietes{$variety2_code}{"Country"};
 				foreach my $varietes_hashInteractions (sort keys(%hash_interactions))
 				{
+					#check if the variety code of the specie is in the interaction file
 					if ($variety2_code =~ m/\b$varietes_hashInteractions\b/)
 					{			
+						#value of isolat is R, MR or S
+						#if status eq private
 						foreach my $isolat (keys %{$hash_interactions{$varietes_hashInteractions}})
 						{
 							foreach my $isolatHashpatho (keys (%hash_pathogenes))
 							{
+								#check if isolat is in both interaction file and pathogen file
 								if ($isolat =~ m/\b$isolatHashpatho\b/)
 								{
 									$pathogen = $hash_pathogenes{$isolatHashpatho}{"Type"};
 									$country_pathogenes = $hash_pathogenes{$isolatHashpatho}{"Country"};
 									$pathotype = $isolat;
 									$interaction_type = $hash_interactions{$varietes_hashInteractions}{$isolat};
+									$info = $hash_interactions{$varietes_hashInteractions}{"Informations"};
 									
 									if ( $variety2_code && $variety2_concatenation &&  ($variety2_concatenation !~ $variety2_code && $variety2_concatenation !~ /All/))
 									{
@@ -576,10 +708,12 @@ if ($action eq "getAdvanced"){
 										next;
 									}
 									
+									
+		
 									#print $variety2_code."<br/>";
 									$nb_matches{$variety2_code}++;
 									#$line_var = "$species2_code	$country_varieties_code	$variety2_code	$pathogen	$country_pathogenes	$pathotype	$interaction_type \n";
-									print F "$species2_code	$country_varieties_code	$variety2_code	$pathogen	$country_pathogenes	$pathotype	$interaction_type\n";
+									print F "$species2_code	$country_varieties_code	$variety2_code	$pathogen	$country_pathogenes	$pathotype	$interaction_type	$info	\n";
 									$compteur++;
 								}
 							}
@@ -592,7 +726,8 @@ if ($action eq "getAdvanced"){
 	}
         close(F);
 	print "<table class='counter'><tr><td><b>$compteur entries found</b></td></tr></table><br/><br/><br/>";
-	print Dumper $val_log;
+	#print Dumper $session;
+	#print Dumper $val_log;
 }
 ############################################################################
 #Make .config files
