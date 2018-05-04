@@ -113,6 +113,15 @@ foreach my $i (sort keys(%pathogen))
 #
 #exit;
 my $compteur = 0;
+
+my $val_log;
+my $LOG = "$Configuration::TMP_DIR/log.info";
+open (F , "<", $LOG) or die ("erreur: \n $!\n");
+while(<F>){
+	chomp;
+	$val_log = $_;
+}
+close(F);
 ############################################################################
 #Menu deroulant automatique liee pour les country varities
 ############################################################################
@@ -306,7 +315,6 @@ if ($action eq "getSearch"){
 	my $var_concatenation;
 	if ($species){
 		$species_concatenation = ",".$species.",";
-		#print Dumper $species_concatenation;
 	}
 	if ($country){
                 $country_concatenation = ",".$country.",";
@@ -324,7 +332,6 @@ if ($action eq "getSearch"){
 	foreach my $pathogeneName (sort keys %pathogen)
 	{
 		my $resistance_exp = $cgi -> param('resistance_'.$pathogeneName);
-		
 		if ($resistance_exp) {
 			$resistance_is_checked = 1;
 			$expected_resistance{$pathogeneName}=$resistance_exp;
@@ -345,12 +352,10 @@ if ($action eq "getSearch"){
 		{
 			$variety_code =~s/\r//g;
 			$variety_code =~s/\n//g;
-			#variety_code : tous les codes de varietes (meme synonymes)
 			my $species_code = $hash_varietes{$variety_code}{"Species"};
 			my $country_code = $hash_varietes{$variety_code}{"Country"};
-			my $origin_code = $hash_varietes{$variety_code}{"Origins"}; #origine associee a chaque variete
+			my $origin_code = $hash_varietes{$variety_code}{"Origins"};
 			my $listSyn;
-			
 			
 			if ($variety_code && $variety_concatenation &&  $variety_concatenation !~ /$variety_code/) #or ($RYMV_concatenation !~ m/\b$RYMV_code\b/ && $choix =~ /and/)
 			{
@@ -370,12 +375,10 @@ if ($action eq "getSearch"){
 			}
 			my %nb_matches;
 			my %infos_patho_concat;
+			my %hash_alert;
 			#my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code";
-			# $line_var affiche les lignes du tableau
-			
 			foreach my $synonymes (keys %{$hash_varietes{$variety_code}{"Synonymes"}})
 			{
-				# %hash_varietes hash contenant les cles synonymes, country, species, origin
 				if ($synonymes !~/^.[a-zA-Z].+\d?$/)
 				{
 					$listSyn = "none";
@@ -386,7 +389,6 @@ if ($action eq "getSearch"){
 				}
 				foreach my $i (sort keys(%interAct))
 				{
-					#print Dumper \%interAct;
 					if ($variety_code =~ m/\b$i\b/)
 					{
 						my $code;
@@ -428,19 +430,32 @@ if ($action eq "getSearch"){
 							}
 							$infos_patho_concat{$t} = "<a href=javascript:afficheIsolat_rymv('$concatenation','$variety_code')>$code</a>";
 							$nb_matches{$variety_code}++;
+							
+							#alert the user if replicates are different
+                            my @info_alert;
+                            @info_alert = split(",", $concatenation);
+                            my $size = scalar @info_alert;
+                            
+                            for (my $y =1; $y<=($size-2);$y++){
+                                if($info_alert[$y] ne $info_alert[$y+1]){
+                                    $hash_alert{$t}+=1;
+                                }
+                            }
 						}
 					} 
 				}
 			}
-			my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code";
-			
 	#		print $variety_code . " " . $nb_matches{$variety_code}." " .$count_info_resistance."<br/>";
+			my $line_var = "<a href=javascript:afficheSynonymes_varietes('$listSyn')>$variety_code</a>	$species_code	$country_code	$origin_code";
 			if ($nb_matches{$variety_code} == $count_info_resistance) {
 				$compteur++;
 				print F $line_var;
-				
 				foreach my $p(@patho_displayed){
 					print F "\t" . $infos_patho_concat{$p};
+                    
+                    if($hash_alert{$p}!=0){
+                        print F "   (!)";
+                    }
 				}
 				print F "\n";
 			}
@@ -449,14 +464,18 @@ if ($action eq "getSearch"){
         close(F);
 	
 print "<table class='counter'><tr><td><b>$compteur entries found</b></td></tr></table>";
-print "<table class='terms'><tr><td><font>Terms of resistance/susceptibility :</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - If a variety is found to be resistant (R) for at least one isolate or pathotype it is considered resistant (R).</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -  Otherwise, if a variety is found to be resistant medium (MR) for at least one isolate or pathotype it is considered resistant medium (MR). </br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Otherwise, the variety is considered suceptible(S). </font></td></tr></table><br/><br/>";
+print "<table class='terms'><tr><td><font>Terms of resistance/susceptibility :</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- If a variety is found to be resistant (R) for at least one isolate or pathotype it is considered resistant (R).</br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Otherwise, if a variety is found to be resistant medium (MR) for at least one isolate or pathotype it is considered resistant medium (MR). </br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+- Otherwise, the variety is considered suceptible(S).</br></br>
+The sign (!) is used when different replicates gave different results. These results are visible by a click on the term.
+</font></td></tr></table><br/><br/>";
 }
 
 
 ############################################################################
 #Affichage des requettes de l'onglet Advanced
 ############################################################################
-#write on the html to display the result table on a new file
 if ($action eq "getAdvanced"){
 	my $OUT = "$execution_dir/table.$session.csv";
 	open (F , ">$OUT");
@@ -551,6 +570,12 @@ if ($action eq "getAdvanced"){
 									{
 										next;
 									}
+									
+									#private data only availabe when user log in 
+									if($val_log =~ /no/ && $hash_interactions{$varietes_hashInteractions}{"Status"} eq "Privee"){
+										next;
+									}
+									
 									#print $variety2_code."<br/>";
 									$nb_matches{$variety2_code}++;
 									#$line_var = "$species2_code	$country_varieties_code	$variety2_code	$pathogen	$country_pathogenes	$pathotype	$interaction_type \n";
@@ -567,6 +592,7 @@ if ($action eq "getAdvanced"){
 	}
         close(F);
 	print "<table class='counter'><tr><td><b>$compteur entries found</b></td></tr></table><br/><br/><br/>";
+	print Dumper $val_log;
 }
 ############################################################################
 #Make .config files
@@ -586,5 +612,5 @@ close($T);
 #Display query
 ############################################################################
 print "<iframe src='$Configuration::CGI_URL/table_viewer.cgi?session=$session' width='100%' height='800px' style='border:solid 0px black;'></iframe><br/><br/>";
-#display the result table
+
 

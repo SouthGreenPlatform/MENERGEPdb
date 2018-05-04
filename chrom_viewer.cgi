@@ -9,6 +9,11 @@ use CGI;
 use Configuration;
 #use lib '/apps/www/coffee-genome/prod/cgi-bin';
 
+require "manipulateBD.pl";
+Parse_Files_List();
+our %hash_varietes;     
+our %hash_pathogenes;
+our %hash_interactions;
 
 my $cgi = CGI->new();
 
@@ -17,18 +22,151 @@ my $chromosome = $cgi -> param('chrom');
 my $display = $cgi -> param('display');
 my $session = $cgi -> param('session');
 
-my $TEMP_EXECUTION_DIR = $Configuration::HTML_DIR;
+my $TEMP_EXECUTION_DIR = $Configuration::TMP_DIR;
 my $javascript_url = $Configuration::JAVASCRIPT_URL;
-my $html_dir = $Configuration::HTML_DIR;
+my $json_url = $Configuration::JSON_URL;
+my $html_dir = $Configuration::TMP_DIR;
+
+############################################
+#Creation of all configuration files for highcharts in Plant's tab
+############################################
+
+#create hash of list
+my %hash_inter_patho;
+my $val;
+my @list_patho;
+foreach my $key (sort keys %hash_pathogenes) {
+    foreach my $key2 (keys %{ $hash_pathogenes{$key} }) {
+        if ($key2 eq "Type"){
+            $val = $hash_pathogenes{$key}->{"Type"};
+            push(@{$hash_inter_patho{$val}},$key);
+            if( (! grep /$val/, @list_patho)) {
+                push(@list_patho, $val);}
+        }
+    }
+}
+
+my $cpt_R = 0;
+my $cpt_MR = 0;
+my $cpt_S = 0;
+my %hash;
+
+foreach my $patho (sort keys %hash_inter_patho) {
+    foreach my $key (keys %hash_interactions) {
+        foreach my $key2 (sort keys %{ $hash_interactions{$key} }) {
+        my $res = $hash_interactions{$key}{$key2};
+        
+            if ($key2 ~~ @{$hash_inter_patho{$patho}}){
+                if($res eq "R"){
+                $cpt_R++;
+                $hash{$patho}{"R"}=$cpt_R;
+                }               
+                elsif($res eq "MR"){
+                $cpt_MR++;
+                $hash{$patho}{"MR"}=$cpt_MR;
+                }
+                elsif($res eq "S"){
+                $cpt_S++;
+                $hash{$patho}{"S"}=$cpt_S;
+                }  
+            }
+        }
+    } 
+    $cpt_R=0;
+    $cpt_MR=0;
+    $cpt_S=0;
+}
+
+#create a file for every pathogen => use to create pie chart
+foreach my $key (keys %hash) {
+my $FILE = "$Configuration::TMP_DIR/res_$key";
+open(F, '>', "$FILE") or die ("error : \n pathogensss \n");
+    foreach my $key2 (keys %{ $hash{$key}}) {
+        print F "$key2\t";
+        print F "$hash{$key}{$key2}";
+        print F "\n";
+    }
+}
+close(F);
+
+#create a file with all the informations => use to create diagram
+my $FILE2 = "$Configuration::TMP_DIR/resistance";
+open(F, '>', "$FILE2")  or die ("error : \n pathogen \n");
+print F "Phenotype \t".join("\t", @list_patho). "\n";
+print F "R\t";
+foreach my $key (sort keys %hash) {
+    foreach my $key2 (keys %{ $hash{$key}}) {
+        if($key2 eq "R"){
+            print F "$hash{$key}{$key2}\t";
+            }
+        }
+}
+print F "\n";
+print F "MR\t";
+foreach my $key (sort keys %hash) {
+    foreach my $key2 (keys %{ $hash{$key}}) {
+        if($key2 eq "MR"){
+            print F "$hash{$key}{$key2}\t";
+            }
+        }
+}
+print F "\n";
+print F "S\t";
+foreach my $key (sort keys %hash) {
+    foreach my $key2 (keys %{ $hash{$key}}) {
+        if($key2 eq "S"){
+            print F "$hash{$key}{$key2}\t";
+            }
+        }
+}
+close(F);
+
+#create conf file
+my $line = "##########################columns
+
+        'Resistance/Suceptibility for each pathogen'=>
+        {
+                \"select_title\" => \"Resistance/Suceptibility for each pathogen\",
+                \"per_chrom\" => \"off\",
+                \"title\" => \"Resistance/Suceptibility for each pathogen\",
+                \"type\" => \"column\",
+                \"stacking\" => \"off\",
+                \"yAxis\" => \"Nb variety\",
+                \"xAxis\" => \"Phenotype\",
+                \"file\" => \"$Configuration::TMP_DIR/resistance\"
+        },
+
+##########################pie
+
+";
+my $FILE3 = "$Configuration::TMP_DIR/chrom_viewer.conf";
+open(F, '>', "$FILE3")  or die ("error : \n $! \n");
+print F $line;
+foreach my $key (sort keys %hash) {
+    my $line2 = "        'Number of variety resistant to $key'=>
+        {
+                \"select_title\" => \"Number of variety resistant to $key\",
+                \"per_chrom\" => \"off\",
+                \"title\" => \"$key\",
+                \"type\" => \"pie\",
+                \"stacking\" => \"off\",
+                \"file\" => \"$Configuration::TMP_DIR/res_$key\"
+        },
+        
+        ";
+    print F $line2   
+}
+close(F);
+
 
 my $config;
 if ($session)
 {
-	$config = $TEMP_EXECUTION_DIR."/$session/chrom_viewer.conf";
+	$config = "/var/www/html/tmp/chrom_viewer.conf";
 }
 else
 {
-	$config = '/apps/www/coffee-genome/prod/cgi-bin/chrom_viewer.conf';
+	#$config = '/apps/www/coffee-genome/prod/cgi-bin/chrom_viewer.conf';
 }
 my %CONFIG;
 eval '%CONFIG = ( ' . `cat $config` . ')';
@@ -40,7 +178,6 @@ sub log10 {
 my $n = shift;
 return log($n)/log(10);
 }
-
 
 my $chrom_to_display;
 if ($chromosome)
@@ -58,6 +195,7 @@ print $cgi->start_html(
     },
 
 );
+
 if (!$chrom_to_display){$chrom_to_display = "All";}
 
 
@@ -92,6 +230,7 @@ my %data;
 my @inds;
 my @xaxis;
 my $max = 0;
+
 open(my $F,$file) or print "<br><b>Not able to open file $file</b><br/>";
 my $numline = 0;
 my $n = 0;
@@ -346,22 +485,22 @@ if ($type_display eq 'heatmap'){
 
 my $html = qq~
 
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-more.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/heatmap.js"></script>
-<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/data.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="http://code.highcharts.com/modules/heatmap.js"></script>
+<script src="http://code.highcharts.com/highcharts-3d.js"></script>
 
 
 
 <!-- Additional files for the Highslide popup effect -->
-<script type="text/javascript" src="https://www.highcharts.com/highslide/highslide-full.min.js"></script>
-<script type="text/javascript" src="/sniplay/javascript/highslide.config.js" charset="utf-8"></script>
-<link rel="stylesheet" type="text/css" href="https://www.highcharts.com/media/com_demo/highslide.css" />
+<script type="text/javascript" src="http://highslide.com/highslide/highslide-full.min.js"></script>
+<script type="text/javascript" src="http://sniplay.southgreen.fr/javascript/highslide.config.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="http://www.highcharts.com/media/com_demo/highslide.css" />
 <link rel="stylesheet" type="text/css" href="$html_dir/css/multiple_chr.css" />
 
-<div id='plot' style='height: 600px; min-width: 310px; max-width: 800px; margin: 0 auto'></div>
+	<div id='plot' style='min-width:120px;height:$window_height'></div>
 	~;
 print $html;
 
@@ -447,7 +586,7 @@ if ($CONFIG{$display}{"link"})
 									pos = this.x;
                                                                         x = this.x - 20000;
                                                                         y = this.x + 20000;
-								hs.graphicsDir = '/sniplay/highslide/graphics/';
+								hs.graphicsDir = 'http://highslide.com/highslide/graphics/';
                                                                 hs.outlineType = 'rounded-white';
                                                                 hs.wrapperClassName = 'draggable-header';
                                                                 hs.htmlExpand(null, {
@@ -602,7 +741,7 @@ else
 <script type='text/javascript'>
 		\$(function () {
 
-		\$.getJSON('$javascript_url/json/data.$session.json', function (data) {
+		\$.getJSON('$json_url/data.$session.json', function (data) {
 		var chart;
 		
 							
@@ -635,7 +774,7 @@ if ($chrom_to_display eq "All"){
 	##################################################################################
 	# create json formatted file
 	##################################################################################
-	open(my $JSON,">$html_dir/json/data.$session.json");
+	open(my $JSON,">/var/www/html/tmp/json/data.$session.json");
 	my $xData_string = join(",",sort {$a<=>$b} keys(%xData));
 	my $nb_x = scalar keys(%xData);
 	my $json_string = qq ~
@@ -676,7 +815,7 @@ if ($chrom_to_display eq "All"){
 	$javascript = qq~
 <script type='text/javascript'>
 \$(function () {
-    \$.getJSON('$javascript_url/json/data.$session.json', function (activity) {
+    \$.getJSON('$json_url/data.$session.json', function (activity) {
         \$.each(activity.datasets, function (i, dataset) {
 
             // Add X values

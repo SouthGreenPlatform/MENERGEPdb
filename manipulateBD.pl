@@ -134,7 +134,7 @@ sub Parse_Files_List()
 			#######################################
 			# Make pathogenes hash
 			#######################################
-			if ($Tab_header[0] !~ /Varieties/)
+			if ($Tab_header[0] =~ /Isolat\/Genetic/)
 			{
 				my $first_column_ref;
 				my $column_name;
