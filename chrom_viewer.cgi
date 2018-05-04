@@ -124,11 +124,11 @@ close(F);
 #create conf file
 my $line = "##########################columns
 
-        'Resistance/Suceptibility for each pathogen'=>
+        'Diagram : Resistance/Suceptibility for each pathogen'=>
         {
-                \"select_title\" => \"Resistance/Suceptibility for each pathogen\",
+                \"select_title\" => \"Diagram : Resistance/Suceptibility for each pathogen\",
                 \"per_chrom\" => \"off\",
-                \"title\" => \"Resistance/Suceptibility for each pathogen\",
+                \"title\" => \"Diagram : Resistance/Suceptibility for each pathogen\",
                 \"type\" => \"column\",
                 \"stacking\" => \"off\",
                 \"yAxis\" => \"Nb variety\",
@@ -145,7 +145,7 @@ print F $line;
 foreach my $key (sort keys %hash) {
     my $line2 = "        'Number of variety resistant to $key'=>
         {
-                \"select_title\" => \"Number of variety resistant to $key\",
+                \"select_title\" => \"Pie chart : Number of variety resistant to $key\",
                 \"per_chrom\" => \"off\",
                 \"title\" => \"$key\",
                 \"type\" => \"pie\",

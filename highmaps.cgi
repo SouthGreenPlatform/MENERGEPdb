@@ -128,7 +128,7 @@ foreach my $country(keys(%countries)){
                 }
             },
             dataLabels: {
-                enabled: true,
+                enabled: false,
                 format: '{point.name}'
             }
         }]
