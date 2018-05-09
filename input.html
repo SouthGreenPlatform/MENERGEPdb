@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Documentation PathostDB </title>
+<link rel="stylesheet" href="styles.css" type="text/css" />
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<!--
+anatine, a free CSS web template by ZyPOP (zypopwebtemplates.com/)
+
+Download: http://zypopwebtemplates.com/
+
+License: Creative Commons Attribution
+//-->
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+</head>
+
+<body>
+
+		<section id="body" class="width">
+			<aside id="sidebar" class="column-left">
+
+			<header>
+				<h1><a href="#">Documentation</a></h1>
+
+				<h2>PathostDB - Host-pathogen interactions</h2>
+
+			</header>
+
+			<nav id="mainnav">
+							<ul id="menu-accordeon">
+						     <li><a href="index.html">Home</a>
+						        <ul>
+						           <li><a href="organization.html">Structure</a></li>
+						           <li><a href="examples.html">Examples</a></li>
+						        </ul>
+						     </li>
+						      <li><a href="get-started.html">Installation</a>
+						        <ul>
+						           <li><a href="input.html">Input data</a></li>
+						        </ul>
+						     </li>
+						  </ul>
+			</nav>
+
+
+
+			</aside>
+			<section id="content" class="column-right">
+
+
+	    <article>
+			<h2>Input data</h2>
+			<br/>
+			<hr width="100%" color="#996600">
+			<br/>
+
+			<br/>
+			<p> 2 types of data must be placed on the server : the CSV files and images for the slideshow. </p>
+			<p> <strong> CSV files </strong>
+			<br/>
+			 3 CSV files will be used to create the database. The templates of these files can be found <a href= "#"> here </a>.
+			 These files must be completed and put in the database directory of the server. If a column can't be completed, it is recommanded to put "-" instead of the data.
+				This will prevent an alert message indicated that the database isn't complete. </p>
+			<br/>
+
+			<p> <strong> Images </strong>
+			<br/>
+			 Images of pathogens and/or pathogenic symptoms have to be the HTML directory of the server and will be used to create the slideshow. <br/>
+			Path for this specific directory :
+				"/var/www/html/slides/img_carrousel/" </p>
+
+
+			<h3>How to complete the CSV files</h2>
+			<br/>
+
+			<p> Data needed to complete the 3 files :
+				<ul>
+					<li> Varities file : </li>
+					<ul>
+						<li> ID of the variety </li>
+						<li> Name of specie </li>
+						<li> Name of country </li>
+						<li> Synonyms </li>
+						<li> Origins </li>
+						<li> Type </li>
+						<li> Latitude and Longitude of the plants (additional) </li>
+					</ul>
+
+					<li> Pathogens file : </li>
+					<ul>
+						<li> Isolat/Genetic group </li>
+						<li> Pathotype </li>
+						<li> Type </li>
+						<li> Country </li>
+						<li> Latitude and Longitude </li>
+					</ul>
+
+					<li> Interactions file : </li>
+					<ul>
+						<li> ID of the variety (must be the same ones as the ones in the variety file) </li>
+						<li> Status public or private of these informations </li>
+						<li> Resistance/Sensibility of each pathotypes (same pathotypes of the pathogens file) </li>
+						<li> Complementary informations : can be anything such as date, publications etc </li>
+					</ul>
+				</ul>
+			</p>
+
+			<br/>
+			<h3>Configuration of the database</h2>
+			<br/>
+			<p> The file Configure.pm found on the CGI directory countains all the different paths used in the different scripts.
+				It is the only file that has on be completed if for some reasons the files are put in a different location on the server. </p>
+			</article>
+
+
+			<footer class="clear">
+				<p>&copy; 2015 sitename. <a href="http://zypopwebtemplates.com/">Free CSS Templates</a> by ZyPOP</p>
+			</footer>
+
+		</section>
+
+		<div class="clear"></div>
+
+	</section>
+
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Documentation Metabolic Viewer </title>
+<title>Documentation PathostDB </title>
 <link rel="stylesheet" href="styles.css" type="text/css" />
 <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,44 +25,71 @@ License: Creative Commons Attribution
 			<header>
 				<h1><a href="#">Documentation</a></h1>
 
-				<h2>Metabolic Viewer for Physarum Polycephalum</h2>
-				
+				<h2>PathostDB - Host-pathogen interactions</h2>
+
 			</header>
 
 			<nav id="mainnav">
-  				<ul>
-                            		<li class="selected-item"><a href="index.html">Home</a></li>
-                           		 <li><a href="subpart/layout.html">Visual options</a></li>
-                            		<li><a href="subpart/algorithms.html">Algorithms</a></li>
-									<li><a href="subpart/export.html">Export</a></li>
-									<li><a href="subpart/get-started.html">How to get started</a></li>
-									<li><a href="subpart/examples.html">Examples</a></li>
-									<li><a href="subpart/futur.html">What's next</a></li>
-
-
-                        	</ul>
+							<ul id="menu-accordeon">
+						     <li><a href="index.html">Home</a>
+						        <ul>
+						           <li><a href="organization.html">Structure</a></li>
+						           <li><a href="examples.html">Examples</a></li>
+						        </ul>
+						     </li>
+						      <li><a href="get-started.html">Installation</a>
+						        <ul>
+						           <li><a href="input.html">Input data</a></li>
+						        </ul>
+						     </li>
+						  </ul>
 			</nav>
 
-			
-			
+
+
 			</aside>
 			<section id="content" class="column-right">
-                		
-	    <article>
-				
-			
-			<h2><img id="blobimg" src="Pictures/blob.png"/> MetaBLOB</h2>
-			<br/>
-			<hr width="100%" color="#e75626"> 
-			<br/>
-            <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut tristique felis. Fusce et mauris risus. Nullam ut augue ultrices, tristique est non, hendrerit ante. Etiam in turpis nibh. Aenean ut molestie augue, sit amet posuere quam. Nullam at mi ut velit condimentum scelerisque et ut turpis. Pellentesque tempus urna sit amet interdum congue. Pellentesque id est faucibus, convallis tortor sit amet, accumsan justo. Sed convallis nibh eget ligula volutpat, id luctus ipsum molestie. Sed sit amet nisi vel sem maximus mattis. Nullam mi risus, lacinia id enim ut, ultricies rutrum nunc. Nulla tincidunt ut purus sit amet lacinia. Duis id nisi auctor quam tincidunt porta et quis purus. Quisque commodo at nisl vitae iaculis.</p>
 
-			<p> Curabitur convallis porttitor vestibulum. Nam dignissim luctus ligula venenatis sodales. Aenean vitae interdum leo, ut feugiat felis. Vestibulum vulputate sit amet leo eget volutpat. Praesent in augue arcu. Mauris sollicitudin dictum posuere. Nam vitae ante vel leo varius consectetur. Ut at semper arcu. </p>	
-            
-		<a href="https://amelaporte.github.io/MetaBlob/" id='metatest' class="button">Try MetaBLOB</a>
-		
+	    <article>
+
+
+			<h2>PathostDB</h2>
+			<br/>
+			<hr width="100%" color="#996600">
+			<br/>
+			<p> PathostDB is web-based database dedicated to Host-pathogen interactions in plants.
+					It is a light interface that provides informations of resistance/sensibility to certain pathogens for given plants. Results of querying are accessible by a table through a web interface. </p>
+
+			<!--p> Pathogens can have a devastating reach on the yield (destruction of crops) and food safety in certain parts of the world. That is why it is so important to be able
+				to identify their resistance factors and put these informations available for others (farmers for example). </p!-->
+			<p> It is a flat files database, created only from CSV files. </p>
+			<p> Advantages of this interface : light, portable, rapid, and no need to have knowledge about database management. </p>
+
+
+			<h3>Featurings</h3>
+				<ul>
+					<li> <strong> Querying and visualization </strong> </br>
+						 The querying is being done through a web interface. The user can choose for which plants and pathogens he wants to have resistance informations.
+					The results of the querying will be displayed on a table in the web interface. </li>
+					<li> <strong> Possibility to restrict the database to a public and a private part. </strong> </br> Some data can be label as private and therefore can be acceded only by some restricted people. Only people with an account (valid id and password) can have access to these informations.</p>
+					By default, whithout succeful log in, the interface is restricted for all users.
+					When a user is logged in, the access is granted for the entire database. The interface can therefore be used by different people at the same time with different levels of access.</li>
+					<li> <strong> Localisation of plants and pathogens </strong> </br>
+						A highmap is used to give the localisation by country to each variety as well as the abundance of every pahathogen present for the variety.
+					 A Google maps is used to indicate the exact coordinates (longitude/latitude) of pathogens. This system can also be used for plants if coordinates are indicated in the input files. </li>
+					<li> <strong> Statistics informations about varieties of plants and their associated pathogens </strong> </br>
+					A diagram and pie charts will give informations about the number of resistance/sensibility varieties for each pathogens. </li>
+					<li> <strong> Picture slideshow of pathogens/pathogenic symptoms</strong> </li>
+					<li> <strong> Download of results </strong> </br>
+					The result tables of the querying can be download in 2 formats : JSON or CSV. </li>
+				</ul>
+			</p>
+
+
 		</article>
-			
+
+
+
 			<footer class="clear">
 				<p>&copy; 2015 sitename. <a href="http://zypopwebtemplates.com/">Free CSS Templates</a> by ZyPOP</p>
 			</footer>
@@ -72,7 +99,6 @@ License: Creative Commons Attribution
 		<div class="clear"></div>
 
 	</section>
-	
 
 </body>
 </html>
