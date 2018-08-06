@@ -1,0 +1,111 @@
+#!/usr/bin/perl -w
+use CGI;
+
+use strict;
+use warnings;
+my $cgi = CGI->new();
+use Data::Dumper;
+
+use Configuration;
+
+############################################################################
+#Import script Initialisation_Enrichment_BD.pl
+############################################################################
+require "manipulateBD.pl";
+Parse_Files_List();
+our %hash_varietes;     
+our %hash_pathogenes;
+our %hash_interactions;
+
+my $synonyme1;
+my $synonyme2;
+my $synonyme3;
+my $synonyme4;
+############################################################################
+#Parameters sent to JavaScript functions
+############################################################################
+my $action = $cgi -> param('action');
+my $species = $cgi -> param('species');
+my $country = $cgi -> param('country');
+my $variete = $cgi -> param('variete');
+my $session = $cgi -> param('session');
+my $display = $cgi -> param('display');
+my $var = $cgi -> param('var');
+my $species2 = $cgi -> param('species2');
+my $variety2 = $cgi -> param('variety2');
+my $counter = $cgi -> param('counter');
+my $pathogen = $cgi -> param('pathogen');
+my $country_pathogenes = $cgi -> param('country_pathogenes');
+my $pathotype = $cgi -> param('pathotype');
+my $interaction_type = $cgi -> param('interaction_type');
+my $country_varieties = $cgi -> param('country_varieties');
+my $ListElements = $cgi -> param('ListElements');
+my $choix = $cgi -> param('choix');
+my $pathogene = $cgi -> param('pathogene');
+my $bouclade = $cgi -> param('bouclade');
+
+
+
+############################################################################
+#Make session for each user
+############################################################################
+if ($cgi -> param('session') =~/(\d+)/)
+{
+        $session = $1;
+}
+if (!$session){
+        $session = int(rand(10000000000000));
+}
+my $execution_dir = "$Configuration::HTML_DIR/tmp/";
+
+print $cgi->header();
+        print $cgi->start_html(
+                -title  => "MenergepDB",
+                -meta   => {'keywords'=>'TAL,xanthomonas','description'=>'TAL target finder'},
+                -script => [{'language'=>'javascript', 'src'=>"http://bioinfo-web.mpl.ird.fr/xantho/utils/inc/jquery-1.4.4.min.js"},{'language'=>'javascript', 'src'=>"http://bioinfo-web.mpl.ird.fr/xantho/utils/inc/jquery-ui-1.8.9.custom.min.js"},{'language'=>'javascript', 'src'=>"$Configuration::HTML_URL/fonctions.js"}],
+
+        );
+
+############################################################################
+#Query
+############################################################################
+my %hash_species;
+my %hash_country;
+foreach my $i (keys(%hash_varietes)){
+	my $species_name = $hash_varietes{$i}{"Species"};
+	my $country_name = $hash_varietes{$i}{"Country"};
+	$hash_species{$species_name} = $species_name;
+        $hash_country{$country_name} = $country_name;
+}
+my %hash_country_patho;
+my %pathogen;
+foreach my $j (sort keys(%hash_pathogenes))
+{
+	my $country_patho = $hash_pathogenes{$j}{"Country"};
+	my $pathotype = $hash_pathogenes{$j}{"Pathotype/race"};
+	my $type = $hash_pathogenes{$j}{"Type"};
+	$hash_country_patho{$j} = $country_patho;
+	$pathogen{$type} = $type;
+}
+my %interAct;
+foreach my $i (sort keys(%hash_pathogenes))
+{
+	my $type = $hash_pathogenes{$i}{"Type"};
+	foreach my $j (sort keys (%hash_interactions)){
+		my $ref_hashhh = $hash_interactions{$j};
+		my %ref_hashhh2 = %$ref_hashhh;
+		foreach my $k (keys %ref_hashhh2){
+			my $p = $hash_interactions{$j}{$k};
+			if ($i =~ $k) {
+				print $p;
+				$interAct{$j}{$type}{$k} = $p;
+			}
+		}	
+	}
+}
+my @TabPath;
+foreach my $i (sort keys(%pathogen))
+{
+	push @TabPath, $i;
+}
+print "ok";
