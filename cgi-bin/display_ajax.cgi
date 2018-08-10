@@ -950,7 +950,7 @@ if ($action eq "getAdvanced"){
 		}
 	}
 	if ($Configuration::CONF_INTERFACE == 1){
-		print F "Species	Country	Varieties	Pathogen	Country of pathogen	Pathotype	Interactions	Complementary informations\n";
+		print F "Zone	Site	Id	Disease	Country of disease	Symptoms	Interactions	Complementary informations\n";
 		my %nb_matches;
 		$operator = $cgi -> param('operator_0');
 		for (my $i =1; $i <= $counter; $i++)
