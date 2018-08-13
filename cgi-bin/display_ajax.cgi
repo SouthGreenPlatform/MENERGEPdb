@@ -1164,6 +1164,9 @@ while(my $line = <F>){
 	elsif($inter eq "-"){
 		$inter = 0;
 	}
+	elsif($inter eq "Interactions"){
+		next;
+	}
 	
 	$hash_hm{$var}{$patho}=$inter;
     
