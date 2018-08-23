@@ -305,20 +305,33 @@ sub Display_InputForm()
 	print "</p>";
 	print "<br/><br/>";
 	
+	#select pictures that will appear in partners section
+	my @files_partners;
+	my $URL_partners = "$Configuration::HTML_URL/logos/partners/"; 
+	my $rep_partners = "$Configuration::HTML_DIR/logos/partners";
+	opendir(REP,$rep_partners) or die "Error : $!\n"; 
+	
+	while(defined(my $fic=readdir REP)){
+		my $f="$fic";
+		if(($fic=~/.*\.jpg/) || ($fic=~/.*\.png/) || ($fic=~/.*\.jpeg/)){
+			push(@files_partners, $f);
+		}
+	}
+	closedir(REP);
+	
 	print "<p>
 	<u><strong><font size='3' color='#550'>Partners</font></strong></u>
 	<div align=\"justify\">
 	<table>
 	<tr>
-	<td valign=\"center\" align=\"center\" width=\"1%\">
-	<td valign=\"center\" align=\"center\" width=\"15%\"><a href=\"http://www.ird.fr\" target=\"_blank\"><img alt=\"IRD logo\" src=\"$Configuration::HTML_URL/logos/logo_ird.png\" height=\"50\"/></a></td>
-	<td valign=\"center\" align=\"center\" width=\"20%\"><a href=\"http://africarice.org/\" target=\"_blank\"><img alt=\"AfricaRice logo\" src=\"$Configuration::HTML_URL/logos/AfricaRice_logo.jpg\" height=\"60\"/></a></td></td>
-	<td valign=\"center\" align=\"center\" width=\"20%\"><a href=\"http://www.grisp.net/main/summary\" target=\"_blank\"><img alt=\"GRiSP logo\" src=\"$Configuration::HTML_URL/logos/GRiSP_logo.jpg\" height=\"70\"/></a></td></td>
-	<td valign=\"center\" align=\"center\" width=\"20%\"><a href=\"http://www.cirad.fr/\" target=\"_blank\"><img alt=\"CIRAD logo\" src=\"$Configuration::HTML_URL/logos/CIRAD_logo.gif\" height=\"70\"/></a></td>
-	</td>
-	</tr>
-	</table>
-	</div>";
+	<td valign=\"center\" align=\"center\" width=\"1%\">";
+	for my $elem(@files_partners){
+	print "<td valign=\"center\" align=\"center\" width=\"15%\"><img alt=\"$elem\" src=\"$URL_partners/$elem\" height=\"50\"/></a></td>";
+	}
+	print "</td>";
+	print "</tr>";
+	print "</table>";
+	print "</div>";
 	print "</p>";
 	print "<br/><br/>";
 	
