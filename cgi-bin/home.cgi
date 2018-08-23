@@ -53,19 +53,43 @@ foreach my $patho (sort keys(%hash_pathogenes))
 ############################################
 #Creation of head and footer
 ############################################
-my $header = qq~
+#if pictures in directory logo_banniere, display logo in the banner
+my @files;
+my $URL_ban = "$Configuration::HTML_URL/logos/logo_banniere/"; 
+my $rep_ban = "$Configuration::HTML_DIR/logos/logo_banniere";
+opendir(REP,$rep_ban) or die "Error : $!\n"; 
 
-<link rel="icon" type="image/png" href="./Logo1.png" />
-<a id="top"></a>
+while(defined(my $fic=readdir REP)){
+    my $f="$fic";
+    if(($fic=~/.*\.jpg/) || ($fic=~/.*\.png/) || ($fic=~/.*\.jpeg/)){
+        push(@files, $f);
+    }
+}
+closedir(REP);
 
-<!--  Main page  -->
-<div id ="page">
-
-<!--  Header  -->
-<!-- h3><img src="$Configuration::HTML_URL/logos/pathost_ban3.png" width=100% height=100% ></h3 -->
-<h3 style="background-color:#FBFBFB;"> <img src="$Configuration::HTML_URL/logos/logo_pathostDB.png" width=10%> <img src="$Configuration::HTML_URL/logos/pathostban.png"></h3>
-
-~;
+my $header;
+if (!@files){
+	$header= qq~
+	<a id="top"></a>
+	
+	<!--  Main page  -->
+	<div id ="page">
+	
+	<!--  Header  -->
+	<h1 style="background-color:#FBFBFB;"> <img src="$Configuration::HTML_URL/logos/logo_pathostDB.png" width=10%> <img src="$Configuration::HTML_URL/logos/pathostban.png"></h1>
+	~;
+}
+else{
+	 $header = qq~
+	<a id="top"></a>
+	
+	<!--  Main page  -->
+	<div id ="page">
+	
+	<!--  Header  -->
+	<h1 style="background-color:#FBFBFB;"> <img src="$Configuration::HTML_URL/logos/logo_pathostDB.png" width=10%> <img src="$Configuration::HTML_URL/logos/pathostban.png"><img src="$URL_ban@files" width=10%"></h1>
+	~;
+}
 
 my $footer = qq~
 <!--  Anchor  -->
