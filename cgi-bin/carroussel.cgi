@@ -7,8 +7,8 @@ use Configuration;
 
 #search images that will appear in carroussel
 my @files;
-my $link = "$Configuration::HTML_URL/slides/img_carrousel/"; 
-my $rep = "$Configuration::HTML_DIR/slides/img_carrousel";
+my $link = "$Configuration::HTML_URL/carrousel/img_carrousel/"; 
+my $rep = "$Configuration::HTML_DIR/carrousel/img_carrousel";
 opendir(REP,$rep) or die "Error : $!\n"; 
 
 while(defined(my $fic=readdir REP)){
