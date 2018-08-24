@@ -342,9 +342,9 @@ sub Display_InputForm()
 	print "<br/>";
 	print "</div>";
 	print "</div>";
-	
-	print "</div>";
 	print "<p style='text-align:center'> Powered by <a href='https://mairaxb.github.io/PathostDB/'><img src='$Configuration::HTML_URL/logos/logo_pathostDB.png' width=5%></a></p>";
+	print "</div>";
+	
 	
 	####################################################################
     # Plants
