@@ -76,7 +76,10 @@ if (!@files){
 	<div id ="page">
 	
 	<!--  Header  -->
-	<h1 style="background-color:#FBFBFB;"> <img src="$Configuration::HTML_URL/logos/logo_pathostDB.png" width=10%> <img src="$Configuration::HTML_URL/logos/pathostban.png"></h1>
+	<h1 style='background-color:#FBFBFB'> <br/><br/>
+	<p style='text-align:center;background-color:#FBFBFB'>INTERFACE FOR HOST-PATHOGEN INTERACTIONS</p>
+	<br/>
+	</h1>
 	~;
 }
 else{
@@ -87,7 +90,10 @@ else{
 	<div id ="page">
 	
 	<!--  Header  -->
-	<h1 style="background-color:#FBFBFB;"> <img src="$Configuration::HTML_URL/logos/logo_pathostDB.png" width=10%> <img src="$Configuration::HTML_URL/logos/pathostban.png"><img src="$URL_ban@files" width=10%"></h1>
+	<h1 style='background-color:#FBFBFB'> <br/><br/>
+	<p style='text-align:center;background-color:#FBFBFB'>INTERFACE FOR HOST-PATHOGEN INTERACTIONS <img src="$URL_ban@files" width=5%"></p>
+	<br/>
+	</h1>
 	~;
 }
 
@@ -105,13 +111,13 @@ my $footer = qq~
 <table>
 <tr>
 <td valign="center" align="center" width="1%">
-<td valign="center" align="center" width="15%"><a href="http://www.ird.fr" target="_blank"><img alt="IRD logo" src="$Configuration::HTML_URL/logos/logo_ird.png" height="50"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://www.umr-rpb.fr" target="_blank"><img alt="IPME logo" src="$Configuration::HTML_URL/logos/IPME_logo.png"height="60"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://africarice.org/" target="_blank"><img alt="AfricaRice logo" src="$Configuration::HTML_URL/logos/AfricaRice_logo.jpg" height="60"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://www.grisp.net/main/summary" target="_blank"><img alt="GRiSP logo" src="$Configuration::HTML_URL/logos/GRiSP_logo.jpg" height="70"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://www.diade-research.fr/" target="_blank"><img alt="DIADE logo" src="$Configuration::HTML_URL/logos/DIADE_logo.png" height="65"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://www.cirad.fr/" target="_blank"><img alt="CIRAD logo" src="$Configuration::HTML_URL/logos/CIAT-Logo-p.jpg" height="70"/></a></td>
-<td valign="center" align="center" width="15%"><a href="http://www.cirad.fr/" target="_blank"><img alt="CIRAD logo" src="$Configuration::HTML_URL/logos/CIRAD_logo.gif" height="70"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.ird.fr" target="_blank"><img alt="IRD logo" src="$Configuration::HTML_URL/logos/logo_ird.png" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.umr-rpb.fr" target="_blank"><img alt="IPME logo" src="$Configuration::HTML_URL/logos/IPME_logo.png" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://africarice.org/" target="_blank"><img alt="AfricaRice logo" src="$Configuration::HTML_URL/logos/AfricaRice_logo.jpg" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.grisp.net/main/summary" target="_blank"><img alt="GRiSP logo" src="$Configuration::HTML_URL/logos/GRiSP_logo.jpg" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.diade-research.fr/" target="_blank"><img alt="DIADE logo" src="$Configuration::HTML_URL/logos/DIADE_logo.png" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.cirad.fr/" target="_blank"><img alt="CIRAD logo" src="$Configuration::HTML_URL/logos/CIAT-Logo-p.jpg" width="35%"/></a></td>
+<td valign="center" align="center" width="15%"><a href="http://www.cirad.fr/" target="_blank"><img alt="CIRAD logo" src="$Configuration::HTML_URL/logos/CIRAD_logo.gif" width="35%"/></a></td>
 </td>
 </tr>
 </table>
@@ -267,44 +273,36 @@ sub Display_InputForm()
 	# Overview
 	####################################################################
 	print "<div id='Overview'>";
-	print "<br/><br/><br/>";	
+	print "<br/>";	
 
 	print "<div id='overview'>";
-	print "<h2 style='color:rgb(51,153,102)'>Welcome to PathostDB ! </h2>";
+	print "<h2 style='color:rgb(51,153,102)'>Welcome ! </h2>";
 	
 	print "<div id='overview2'>";
+	
+	#About the interface
 	print "<p>
-	<u><strong><font size='3' color='#550'>PathostDB</font></strong></u> is a web-based database providing access to host-pathogen interactions data.</p>
-	<p>This database is dedicated for the querying and visualization of interactions between plants and pathogens. 
-	The initial project was to visualized the results of the project
-	<a href='http://www.madagascar.ird.fr/les-activites/la-recherche3/madagascar/riz-et-pathogenes/menergep' target=_blank><font size='3' color='#550'><strong>MENERGEP.</strong></font></a>";
-	print "<p> Now this database can be used for different types of interactions and also give informations about :
-	<ul> <li> localisation and abundance of pathogen for every variety </li>
-	<li> statistics informations </li>
-	<li> images of pathogens/symptoms </li>
-	<li> localisation of every pathogen </li></ul>";
+	<u><strong><font size='3' color='#550'>About the project</font></strong></u>
+	<br/><br/>";
+	my $Conf = "$Configuration::HTML_DIR/config_home.txt";
+	open (my $info , "<", $Conf) or die ("erreur: \n $!\n");
+	while(my $line = <$info>){
+		chomp $line;
+		if ($line eq ''){
+			print "<br/>";
+		}
+		if ($line =~/^\t/){
+			print "<p style='text-indent: 5em;'> $line </p>";
+		}
+		print "<p> $line </p>";
+	}
 	print "</p>";
 	print "<br/>";
+	close($info);
 	
-	print "<p>
-	<u><strong><font size='3' color='#550'>Documentation</font></strong></u>
-	<br/><br/>
-	A documentation including the general structure of the software, as well as instructions on how to install it and get started with it is available
-	<a href ='https://mairaxb.github.io/PathostDB/' style='color:rgb(51,153,102)'> here</a>.";
-	print "</p>";
-	print "<br/>";
-	
-	print "<p>
-	<u><strong><font size='3' color='#550'>Fundings</font></strong></u>
-	<br/><br/>
-	This development was supported and financed by: 
-	<ul>
-	<li>System Directorate of Information <a href='https://www.ird.fr/dsi/la-dsi/organigramme-trombino/s.i.l/sil-de-france-sud' target='_blank'> <font size='3' color='#550'><strong>(DSI)</strong></font></a> IRD Montpellier in 2015 as parts of <a href='https://www.ird.fr/informatique-scientifique/projet_afficher/162' target='_blank'><font size='3' color='#550'><strong>SPIRALES </strong></font></a> project.<br/></li>
-	<li>The Global Rice Science Partnership <a href='http://www.grisp.net/main/summary' target='_blank'><font size='3' color='#550'><strong>(GRiSP)</strong></font></a> from January 2012 to January 2015 as parts of <a href='http://www.madagascar.ird.fr/les-activites/la-recherche3/madagascar/riz-et-pathogenes/menergep' target='_blank'><font size='3' color='#550'><strong> MENERGEP </strong></font></a> project.<br/></li>
-	</ul> ";
-	print "</p>";
 	print "<br/><br/>";
 	
+	#Partners
 	#select pictures that will appear in partners section
 	my @files_partners;
 	my $URL_partners = "$Configuration::HTML_URL/logos/partners/"; 
@@ -335,10 +333,18 @@ sub Display_InputForm()
 	print "</p>";
 	print "<br/><br/>";
 	
+	#About PathostDB
+	print "<p>
+	<u><strong><font size='3' color='#550'>About PathostDB</font></strong></u><br/>
+	PathostDB is a web-based database providing access to host-pathogen interactions between plants and pathogens.</p>
+	<p>A documentation including the general structure of the software, as well as instructions on how to install it and get started with it is available
+	<a href ='https://mairaxb.github.io/PathostDB/' style='color:rgb(51,153,102)'> here</a>. </p>";
+	print "<br/>";
 	print "</div>";
 	print "</div>";
 	
 	print "</div>";
+	print "<p style='text-align:center'> Powered by <a href='https://mairaxb.github.io/PathostDB/'><img src='$Configuration::HTML_URL/logos/logo_pathostDB.png' width=5%></a></p>";
 	
 	####################################################################
     # Plants
