@@ -1,0 +1,13 @@
+This database is dedicated for the querying and visualization of interactions between plants and pathogens. The initial project was to visualized the results of the project MENERGEP.
+
+Now this database can be used for different types of interactions and also give informations about :
+    - localisation and abundance of pathogen for every variety
+    - statistics informations
+    - images of pathogens/symptoms
+    - localisation of every pathogen 
+
+
+Fundings:
+This development was supported and financed by:
+    - System Directorate of Information (DSI) IRD Montpellier in 2015 as parts of SPIRALES project.
+    - The Global Rice Science Partnership (GRiSP) from January 2012 to January 2015 as parts of MENERGEP project.
